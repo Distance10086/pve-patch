@@ -1,7 +1,5 @@
-![image](https://github.com/user-attachments/assets/1c7e44bf-e0c0-4e0c-a7dd-64fe0b81a8ea)# pve-patch
+# pve-patch
 PVE to no virtualization patch  xiaodisec
-
-PVE去虚拟化，在原版基础上实现了众多传感器设备
 
 下载2个 releases安装包 传到服务器 然后执行下面的命令
 ```bash
@@ -21,6 +19,11 @@ qm set 100 -args '-cpu host,hypervisor=off,vmware-cpuid-freq=false,enforce=false
 使用文档参考飞书: 
 
 https://uehkns5636.feishu.cn/docx/JhJHdw4X6ofYC7xq94IcwQBbnpf?from=from_copylink
+
+
+PVE去虚拟化，在原版基础上实现了众多传感器设备
+![image](https://github.com/user-attachments/assets/1c7e44bf-e0c0-4e0c-a7dd-64fe0b81a8ea)
+
 
 
 
