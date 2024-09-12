@@ -3,10 +3,6 @@ PVE to no virtualization patch  xiaodisec
 
 PVE去虚拟化，在原版基础上实现了众多传感器设备
 
-
-![Proxmox VE no virtualization](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/v2/cover/HRORbbyNjou0GSxj3zUce56NnZf/?fallback_source=1&height=1280&mount_node_token=Oh5SdramsoaoxlxQ5kicRUXTngc&mount_point=docx_image&policy=equal&width=1280)
-
-
 下载2个 releases安装包 传到服务器 然后执行下面的命令
 ```bash
 # 安装QEMU
