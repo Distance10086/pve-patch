@@ -1,7 +1,27 @@
-# pve-patch
+![image](https://github.com/user-attachments/assets/1c7e44bf-e0c0-4e0c-a7dd-64fe0b81a8ea)# pve-patch
 PVE to no virtualization patch  xiaodisec
 
-PVE去虚拟化
+PVE去虚拟化，在原版基础上实现了众多传感器设备
+
+
+![Proxmox VE no virtualization](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/v2/cover/HRORbbyNjou0GSxj3zUce56NnZf/?fallback_source=1&height=1280&mount_node_token=Oh5SdramsoaoxlxQ5kicRUXTngc&mount_point=docx_image&policy=equal&width=1280)
+
+
+下载2个 releases安装包 传到服务器 然后执行下面的命令
+```bash
+# 安装QEMU
+apt install -y pve-qemu-kvm=9.0.2-2
+dpkg -i pve-qemu-kvm_9.0.2-2_amd64.deb
+
+# 安装edk2
+dpkg -i pve-edk2-firmware-ovmf_4.2023.08-4_all.deb
+
+# 设置args信息 <100 为PVE的VM ID 可自行调整>
+qm set 100 -args '-cpu host,hypervisor=off,vmware-cpuid-freq=false,enforce=false,host-phys-bits=true'
+
+# 下一步就是重装windwos去吧(防止注册表残留信息)
+```
+
 使用文档参考飞书: 
 
 https://uehkns5636.feishu.cn/docx/JhJHdw4X6ofYC7xq94IcwQBbnpf?from=from_copylink
