@@ -1,5 +1,5 @@
 # pve-patch
-PVE to no virtualization patch  xiaodisec
+PVE 去虚拟化 patch  xiaodi sec yyds NO.1
 
 下载2个 releases安装包 传到服务器 然后执行下面的命令
 ```bash
