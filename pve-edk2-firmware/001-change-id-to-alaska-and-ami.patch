@@ -1,0 +1,22 @@
+diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
+index 0ff058b0a9..e65aca182d 100644
+--- a/MdeModulePkg/MdeModulePkg.dec
++++ b/MdeModulePkg/MdeModulePkg.dec
+@@ -1984,7 +1984,7 @@
+ 
+   ## Default OEM ID for ACPI table creation, its length must be 0x6 bytes to follow ACPI specification.
+   # @Prompt Default OEM ID for ACPI table creation.
+-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId|"INTEL "|VOID*|0x30001034
++  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId|"ALASKA"|VOID*|0x30001034
+ 
+   ## Default OEM Table ID for ACPI table creation, it is "EDK2    ".
+   #  According to ACPI specification, this field is particularly useful when
+@@ -1992,7 +1992,7 @@
+   #  The OEM assigns each dissimilar table a new OEM Table ID.
+   #  This PCD is ignored for definition block.
+   # @Prompt Default OEM Table ID for ACPI table creation.
+-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId|0x20202020324B4445|UINT64|0x30001035
++  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId|0x20202049204D2041|UINT64|0x30001035
+ 
+   ## Default OEM Revision for ACPI table creation.
+   #  According to ACPI specification, for LoadTable() opcode, the OS can also
