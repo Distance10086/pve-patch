@@ -1,0 +1,83 @@
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 3750a0c688b7..17c9495ae93b 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2053,7 +2053,7 @@ static int kvm_msr_user_space(struct kvm_vcpu *vcpu, u32 index,
+
+ 	return 1;
+ }
+-
++static u64 data_1d9=0x4000;//dds 666
+ int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
+ {
+ 	u32 ecx = kvm_rcx_read(vcpu);
+@@ -2061,12 +2061,32 @@ int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
+ 	int r;
+
+ 	r = kvm_get_msr_with_filter(vcpu, ecx, &data);
++	if(ecx==0x4b564d00){r=1;}//xiaodi SEC666 强制成不可访问
++	if(ecx==0x1db){r=1;}//xiaodi SEC666 强制成不可访问
++	if(ecx==0x1a2){r=0;}//xiaodi SEC666 强制成可访问
++	if(ecx==0x19c){r=0;}//xiaodi SEC666 强制成可访问
+
+ 	if (!r) {
++		if(ecx==0x1d9){//xiaodi SEC666 1D9H 473 IA32_DEBUGCT
++			data=data_1d9;//xiaodi SEC666直接读取缓存数据
++			//printk("xiaodi SEC666 rdmsr 0x1d9 return data=%llu\n",data);
++		}
++		//if(ecx==0x179){data=0xc14;}//xiaodi SEC666 强制改数据 提供机器检查架构 (MCA) 的功能和限制信息，用于处理硬件错误和异常。
++		//if(ecx==0x3a){data=0x5;}//xiaodi SEC666 强制改数据 用于控制处理器的特性和功能，例如启用或禁用虚拟化支持。
++		//if(ecx==0x198){data=0x258d00002f00;}//xiaodi SEC666 强制改数据，提供有关处理器当前性能状态的信息，包括频率、电压和功耗等。
++		//if(ecx==0x199){data=0x3d00;}//xiaodi SEC666 强制改数据，用于控制处理器的性能和功耗管理，可以调整处理器的频率和电源状态。
++		//if(ecx==0x1a2){data=0x641400;}//xiaodi SEC666 强制改数据 寄存器的bit23-16记录了TCC_ACTIVATION_TEMP值，改值可理解为CPU触发调温手段的阈值，该阈值出厂时设置；
++		//if(ecx==0x1a0){data=0x850089;}//xiaodi SEC666 强制改数据
++		//if(ecx==0x19c){data=0x88490000;}//xiaodi SEC666 强制改数据 寄存器的bit22-16记录了 TEMPERATURE—值，这个值是CPU温度相对于TCC_ACTIVATION_TEMP的温度值；
++		//if(ecx==0x606){data=0xa0e03;}//xiaodi SEC666 强制改数据 606H 1542 MSR_RAPL_POWER_UNIT
++		//if(ecx==0x1fc){data=0xfc005b;}//xiaodi SEC666 强制改数据 1FCH 508 MSR_POWER_CTL
++
++
++		printk("rdmsr 0x%x return 0x%llx\n",ecx,data);//xiaodi SEC666
+ 		trace_kvm_msr_read(ecx, data);
+-
+ 		kvm_rax_write(vcpu, data & -1u);
+ 		kvm_rdx_write(vcpu, (data >> 32) & -1u);
++
+ 	} else {
+ 		/* MSR read failed? See if we should ask user space */
+ 		if (kvm_msr_user_space(vcpu, ecx, KVM_EXIT_X86_RDMSR, 0,
+@@ -2084,12 +2104,33 @@ int kvm_emulate_wrmsr(struct kvm_vcpu *vcpu)
+ 	u32 ecx = kvm_rcx_read(vcpu);
+ 	u64 data = kvm_read_edx_eax(vcpu);
+ 	int r;
+-
+-	r = kvm_set_msr_with_filter(vcpu, ecx, data);
++	if(ecx==0x1d9){//xiaodi SEC666
++		if(data==0x4000||data==0x4001||data==0x4002||data==0x4003){//xiaodi SEC666
++			r=0;//xiaodi SEC666 直接不屏蔽
++		}
++	}else{
++		r = kvm_set_msr_with_filter(vcpu, ecx, data);
++	}
+
+ 	if (!r) {
++		if(ecx==0x1d9){//xiaodi SEC666 1D9H 473 IA32_DEBUGCT
++			if(data==0x4000||data==0x4001){data_1d9=0x4000;
++				printk("xiaodi SEC666 wrmsr 0x1d9 data=%llx data_1d9=%llx\n",data,data_1d9);
++			}//dds66 写4000写4001 得4000
++			if(data==0x4002||data==0x4003){data_1d9=0x4002;
++				printk("xiaodi SEC666 wrmsr 0x1d9 data=%llx data_1d9=%llx\n",data,data_1d9);
++			}//dds66 写4002写4003 得4002
++			if(data==0x0||data==0x01){data_1d9=0;
++				printk("xiaodi SEC666 wrmsr 0x1d9 data=%llx data_1d9=%llx\n",data,data_1d9);
++			}//dds66 写0写1 得0
++			if(data==0x2||data==0x03){data_1d9=2;
++				printk("xiaodi SEC666 wrmsr 0x1d9 data=%llx data_1d9=%llx\n",data,data_1d9);
++			}//dds66 写2写3 得2
++		}
++		printk("wrmsr 0x%x 0x%llx\n",ecx,data);//xiaodi SEC666
+ 		trace_kvm_msr_write(ecx, data);
+ 	} else {
++
+ 		/* MSR write failed? See if we should ask user space */
+ 		if (kvm_msr_user_space(vcpu, ecx, KVM_EXIT_X86_WRMSR, data,
+ 				       complete_fast_msr_access, r))
