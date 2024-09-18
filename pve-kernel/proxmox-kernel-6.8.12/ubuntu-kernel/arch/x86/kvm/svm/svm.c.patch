@@ -1,0 +1,72 @@
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index cf86607bc696..96a67187b185 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -3240,7 +3240,42 @@ static int invpcid_interception(struct kvm_vcpu *vcpu)
+
+ 	return kvm_handle_invpcid(vcpu, type, gva);
+ }
++/////////////////////////////////////////////////////////////////////////////////////// dds666
++//source from https://github.com/WCharacter/RDTSC-KVM-Handler
++static u32 print_once = 1;
++static int handle_rdtsc_interception(struct kvm_vcpu *vcpu)
++{
++    static u64 rdtsc_fake = 0;
++	static u64 rdtsc_prev = 0;
++	u64 rdtsc_real = rdtsc();
++
++	if(print_once)
++	{
++		printk(KERN_ALERT "AMD KVM lixiaoliu and dds666 function is working!!\n");
++		print_once = 0;
++		rdtsc_fake = rdtsc_real;
++	}
++
++	if(rdtsc_prev != 0)
++	{
++		if(rdtsc_real > rdtsc_prev)
++		{
++			u64 diff = rdtsc_real - rdtsc_prev;
++			u64 fake_diff =  diff / 16; // if you have 3.2Ghz on your vm, change 20 to 16
++			rdtsc_fake += fake_diff;
++		}
++	}
++	if(rdtsc_fake > rdtsc_real)
++	{
++		rdtsc_fake = rdtsc_real;
++	}
++	rdtsc_prev = rdtsc_real;
+
++	vcpu->arch.regs[VCPU_REGS_RAX] = rdtsc_fake & -1u;
++    vcpu->arch.regs[VCPU_REGS_RDX] = (rdtsc_fake >> 32) & -1u;
++	return svm_skip_emulated_instruction(vcpu);
++}
++///////////////////////////////////////////////////////////////////////////////////////
+ static int (*const svm_exit_handlers[])(struct kvm_vcpu *vcpu) = {
+ 	[SVM_EXIT_READ_CR0]			= cr_interception,
+ 	[SVM_EXIT_READ_CR3]			= cr_interception,
+@@ -3313,6 +3348,7 @@ static int (*const svm_exit_handlers[])(struct kvm_vcpu *vcpu) = {
+ 	[SVM_EXIT_AVIC_INCOMPLETE_IPI]		= avic_incomplete_ipi_interception,
+ 	[SVM_EXIT_AVIC_UNACCELERATED_ACCESS]	= avic_unaccelerated_access_interception,
+ 	[SVM_EXIT_VMGEXIT]			= sev_handle_vmgexit,
++	[SVM_EXIT_RDTSC]			= handle_rdtsc_interception, // dds666 added
+ };
+
+ static void dump_vmcb(struct kvm_vcpu *vcpu)
+@@ -5102,6 +5138,7 @@ static __init void svm_set_cpu_caps(void)
+ 	if (nested) {
+ 		kvm_cpu_cap_set(X86_FEATURE_SVM);
+ 		kvm_cpu_cap_set(X86_FEATURE_VMCBCLEAN);
++		kvm_cpu_cap_set(X86_FEATURE_FLUSHBYASID);
+
+ 		/*
+ 		 * KVM currently flushes TLBs on *every* nested SVM transition,
+@@ -5357,7 +5394,7 @@ static void __svm_exit(void)
+ static int __init svm_init(void)
+ {
+ 	int r;
+-
++	printk(KERN_ALERT "AMD KVM lixiaoliu and dds666 v1.0 Start,ok!!!\n");//dds666
+ 	__unused_size_checks();
+
+ 	if (!kvm_is_svm_supported())
